@@ -1,16 +1,9 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Semilla de Pallar</title>
-    <script type="importmap">
-      {
-        "imports": {
-          "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js"
-        }
-      }
-    </script>
     <style>
       :root {
         --background: #efffe9;
@@ -82,10 +75,20 @@
         font-size: 14px;
         fill: var(--muted);
       }
+
+      .fallback {
+        max-width: 760px;
+        margin: 40px auto;
+        padding: 20px 24px;
+        border-radius: 14px;
+        background: rgba(255,255,255,0.8);
+        box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+        line-height: 1.5;
+      }
     </style>
   </head>
   <body>
-    <div class="info">El Poder de la Germinación TEOFRASTO </div>
+    <div class="info">El Poder de la Germinación TEOFRASTO</div>
     <div id="plant-view" class="plant-view" aria-label="Modelo 3D de una planta con raíces"></div>
 
     <div class="stage" aria-label="Etapas de germinación de la semilla">
@@ -137,10 +140,30 @@
     </div>
 
     <script type="module">
-      import * as THREE from "three";
+      import * as THREE from "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js";
       import { OrbitControls } from "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/controls/OrbitControls.js";
 
-      const container = document.querySelector("#plant-view");
+      const container = document.getElementById("plant-view");
+      if (!container) {
+        document.body.innerHTML = `
+          <div class="fallback">
+            <h2>No se encontró el contenedor de la escena.</h2>
+            <p>Revisa que el archivo <strong>raices.html</strong> esté servido desde un navegador o desde GitHub Pages.</p>
+          </div>
+        `;
+        throw new Error("No existe el contenedor #plant-view");
+      }
+
+      if (!window.WebGLRenderingContext) {
+        container.innerHTML = `
+          <div class="fallback">
+            <h2>Tu navegador no soporta WebGL.</h2>
+            <p>La escena 3D no se puede mostrar en este navegador.</p>
+          </div>
+        `;
+        return;
+      }
+
       const scene = new THREE.Scene();
       scene.background = new THREE.Color(0xeafee7);
 
