@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Semilla de Pallar</title>
+    <script type="importmap">
+      {
+        "imports": {
+          "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js"
+        }
+      }
+    </script>
+    <style>
+      :root {
+        --background: #efffe9;
+        --text: #1f3825;
+        --muted: #55715c;
+      }
+
+      * { box-sizing: border-box; }
+
+      html, body {
+        margin: 0;
+        width: 100%;
+        height: 100%;
+        font-family: Arial, Helvetica, sans-serif;
+        background: linear-gradient(#efffe9, #dfffe0);
+        color: var(--text);
+        overflow-x: hidden;
+        overflow-y: auto;
+      }
+
+      .info {
+        position: relative;
+        width: min(1180px, 94vw);
+        margin: 18px auto 0;
+        padding: 10px 14px;
+        border-radius: 10px;
+        background: rgba(255,255,255,0.7);
+        box-shadow: 0 2px 12px rgba(0,0,0,0.12);
+        font-size: 14px;
+      }
+
+      .plant-view {
+        width: min(1180px, 94vw);
+        height: min(620px, 70vh);
+        min-height: 430px;
+        margin: 12px auto 24px;
+        overflow: hidden;
+        border-radius: 18px;
+        box-shadow: 0 8px 26px rgba(46, 104, 46, 0.16);
+      }
+
+      .plant-view canvas {
+        display: block;
+        width: 100%;
+        height: 100%;
+      }
+
+      .stage {
+        width: min(980px, 94vw);
+        margin: 0 auto 30px;
+        padding: 14px 0;
+        border-radius: 18px;
+        background: rgba(255,255,255,0.28);
+      }
+
+      svg {
+        display: block;
+        width: 100%;
+        height: auto;
+      }
+
+      .label {
+        font-size: 18px;
+        font-weight: 700;
+        fill: var(--text);
+      }
+
+      .sub {
+        font-size: 14px;
+        fill: var(--muted);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="info">El Poder de la Germinación TEOFRASTO </div>
+    <div id="plant-view" class="plant-view" aria-label="Modelo 3D de una planta con raíces"></div>
+
+    <div class="stage" aria-label="Etapas de germinación de la semilla">
+      <svg viewBox="0 0 980 220" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+        <title id="title">Etapas de germinación</title>
+        <desc id="desc">Cuatro etapas de la germinación de una semilla con formas suaves en fondo claro.</desc>
+
+        <g transform="translate(0,8)">
+          <g transform="translate(20,20)">
+            <path d="M10 42 C 28 18, 52 18, 70 42 C 52 62, 28 62, 10 42 Z" fill="#d8b07a"/>
+            <path d="M38 28 C 52 18, 72 20, 84 30" fill="none" stroke="#b57b3d" stroke-width="2" stroke-linecap="round"/>
+            <text x="2" y="90" class="label">1.</text>
+            <text x="28" y="90" class="sub">Semilla</text>
+            <text x="28" y="110" class="sub">Dormida</text>
+          </g>
+
+          <g transform="translate(190,20)">
+            <path d="M10 42 C 28 18, 52 18, 70 42 C 52 62, 28 62, 10 42 Z" fill="#d8b07a"/>
+            <path d="M36 28 C 50 18, 70 20, 82 30" fill="none" stroke="#b57b3d" stroke-width="2" stroke-linecap="round"/>
+            <text x="2" y="90" class="label">2.</text>
+            <text x="28" y="90" class="sub">Semilla</text>
+            <text x="28" y="110" class="sub">Dormida</text>
+          </g>
+
+          <g transform="translate(360,18)">
+            <path d="M8 42 C 22 18, 44 16, 60 42 C 44 60, 20 58, 8 42 Z" fill="#d6bf8d"/>
+            <path d="M30 18 C 44 10, 58 12, 68 22" fill="none" stroke="#9b6e3a" stroke-width="2" stroke-linecap="round"/>
+            <text x="2" y="90" class="label">3.</text>
+            <text x="28" y="90" class="sub">Embrión</text>
+          </g>
+
+          <g transform="translate(530,18)">
+            <path d="M14 44 C 28 18, 62 18, 78 42 C 66 60, 38 60, 14 44 Z" fill="#caa76d"/>
+            <circle cx="52" cy="42" r="8" fill="#d7b37d"/>
+            <text x="2" y="90" class="label">4.</text>
+            <text x="28" y="90" class="sub">Emergencia</text>
+            <text x="28" y="110" class="sub">Radícula</text>
+          </g>
+
+          <g transform="translate(720,18)">
+            <path d="M14 44 C 32 18, 78 16, 96 42 C 80 62, 42 62, 14 44 Z" fill="#d3af73"/>
+            <path d="M56 20 C 70 10, 86 12, 94 20" fill="none" stroke="#9f6d3b" stroke-width="2" stroke-linecap="round"/>
+            <text x="2" y="90" class="label">5.</text>
+            <text x="28" y="90" class="sub">Crecimiento</text>
+            <text x="28" y="110" class="sub">Plúmula</text>
+          </g>
+        </g>
+      </svg>
+    </div>
+
+    <script type="module">
+      import * as THREE from "three";
+      import { OrbitControls } from "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/controls/OrbitControls.js";
+
+      const container = document.querySelector("#plant-view");
+      const scene = new THREE.Scene();
+      scene.background = new THREE.Color(0xeafee7);
+
+      const camera = new THREE.PerspectiveCamera(45, 1, 0.1, 100);
+      camera.position.set(0, 3, 8);
+
+      const renderer = new THREE.WebGLRenderer({ antialias: true });
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+      renderer.shadowMap.enabled = true;
+      renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+      container.appendChild(renderer.domElement);
+
+      const controls = new OrbitControls(camera, renderer.domElement);
+      controls.enableDamping = true;
+      controls.target.set(0, 0.3, 0);
+
+      scene.add(new THREE.AmbientLight(0xffffff, 1.4));
+      const dirLight = new THREE.DirectionalLight(0xffffff, 1.8);
+      dirLight.position.set(5, 8, 4);
+      dirLight.castShadow = true;
+      scene.add(dirLight);
+
+      const floor = new THREE.Mesh(
+        new THREE.CircleGeometry(6, 64),
+        new THREE.MeshStandardMaterial({ color: 0x9ddf8e, roughness: 0.95 })
+      );
+      floor.rotation.x = -Math.PI / 2;
+      floor.position.y = -2.8;
+      floor.receiveShadow = true;
+      scene.add(floor);
+
+      const planta = new THREE.Group();
+      scene.add(planta);
+
+      const semilla = new THREE.Mesh(
+        new THREE.SphereGeometry(0.7, 32, 32),
+        new THREE.MeshStandardMaterial({ color: 0x8c5a2b, roughness: 0.85 })
+      );
+      semilla.position.y = 0.2;
+      semilla.scale.set(1.1, 0.9, 1.1);
+      semilla.castShadow = true;
+      planta.add(semilla);
+
+      const tallo = new THREE.Mesh(
+        new THREE.CylinderGeometry(0.12, 0.16, 2.5, 20),
+        new THREE.MeshStandardMaterial({ color: 0x4caf50, roughness: 0.8 })
+      );
+      tallo.position.y = 1.8;
+      tallo.castShadow = true;
+      planta.add(tallo);
+
+      const hojaMat = new THREE.MeshStandardMaterial({ color: 0x56bf40, roughness: 0.7 });
+      function crearHoja(x, y, z, rotX, rotY, escalaX, escalaY) {
+        const hoja = new THREE.Mesh(new THREE.SphereGeometry(0.45, 20, 20), hojaMat);
+        hoja.scale.set(escalaX, escalaY, 0.5);
+        hoja.position.set(x, y, z);
+        hoja.rotation.set(rotX, rotY, 0);
+        hoja.castShadow = true;
+        planta.add(hoja);
+      }
+
+      crearHoja(0.5, 2.8, 0.1, 0.3, 0.9, 1.3, 0.7);
+      crearHoja(-0.6, 2.4, 0.1, -0.4, -0.6, 1.1, 0.8);
+      crearHoja(0.3, 3.2, -0.2, 0.5, 1.4, 1.2, 0.6);
+
+      const raizMat = new THREE.MeshStandardMaterial({ color: 0x7b4a1d, roughness: 1 });
+      function crearRaiz(x, y, z, rotX, rotY, length) {
+        const raiz = new THREE.Mesh(
+          new THREE.CylinderGeometry(0.05, 0.07, length, 12),
+          raizMat
+        );
+        raiz.position.set(x, y, z);
+        raiz.rotation.set(rotX, rotY, 0);
+        raiz.castShadow = true;
+        planta.add(raiz);
+      }
+
+      crearRaiz(-0.15, -0.8, 0.1, 0.7, -0.6, 1.8);
+      crearRaiz(0.25, -0.9, 0.0, -0.9, 0.7, 2.0);
+      crearRaiz(-0.35, -0.7, -0.2, 1.1, -1.5, 1.5);
+      crearRaiz(0.45, -0.8, -0.1, -1.2, 1.3, 1.7);
+
+      for (let i = 0; i < 6; i += 1) {
+        const ang = (i / 6) * Math.PI * 2;
+        const x = Math.cos(ang) * 0.25;
+        const z = Math.sin(ang) * 0.2;
+        crearRaiz(x, -1.3, z, 0.85 + Math.random() * 0.6, ang, 1.1 + Math.random() * 0.7);
+      }
+
+      const clock = new THREE.Clock();
+      function resize() {
+        const width = container.clientWidth;
+        const height = container.clientHeight;
+        camera.aspect = width / height;
+        camera.updateProjectionMatrix();
+        renderer.setSize(width, height, false);
+      }
+
+      function animate() {
+        requestAnimationFrame(animate);
+        const time = clock.getElapsedTime();
+        planta.rotation.y = time * 0.35;
+        planta.position.y = Math.sin(time * 1.3) * 0.08;
+        controls.update();
+        renderer.render(scene, camera);
+      }
+
+      window.addEventListener("resize", resize);
+      resize();
+      animate();
+    </script>
+  </body>
+</html>
